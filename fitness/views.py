@@ -9,7 +9,6 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import AccessToken
-from django.contrib.auth import authenticate
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -102,18 +101,14 @@ class ActivityViewSet(viewsets.ModelViewSet):
         """
         serializer.save(user=self.request.user)
 
-    def perform_update(self, serializer):
-        """
-        Ensure the user can only update their own activity.
-        """
-        serializer.save(user=self.request.user)
-
     def perform_destroy(self, instance):
         """
         Ensure users can only delete their own activities.
+        Provide a response on successful deletion.
         """
         if instance.user == self.request.user:
             instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)  # Indicate successful deletion
 
     @action(detail=False, methods=['get'], url_path='metrics')
     def activity_metrics(self, request):

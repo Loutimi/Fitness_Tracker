@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fitness',
     'rest_framework',
+    'rest_framework_simplejwt',
     'drf_spectacular',
 ]
 
