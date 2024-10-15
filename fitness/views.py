@@ -1,15 +1,40 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, generics, status
+from rest_framework.response import Response
 from .models import Activity, Leaderboard
-from .serializers import UserSerializer, ActivitySerializer, LeaderboardSerializer
+from .serializers import UserSerializer, ActivitySerializer, LeaderboardSerializer, RegisterSerializer, LoginSerializer
 from datetime import timedelta
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 from django.db.models import Sum
 from rest_framework.decorators import action
-# Custom permission class to restrict activity management to the owner
+from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth import authenticate
 
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            token = AccessToken.for_user(user)
+            return Response({
+                'access': str(token),
+                'message': 'Login successful'
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
