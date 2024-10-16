@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, ActivityViewSet, LeaderboardViewSet, RegisterView, LoginView
+from .views import home, UserViewSet, ActivityViewSet, LeaderboardViewSet, RegisterView, LoginView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -12,6 +12,7 @@ router.register(r'leaderboard', LeaderboardViewSet, basename='leaderboard')
 
 urlpatterns = [
     path('', include(router.urls)),  # Include all router URLs
+    path('home/', home, name='home'),
     path('api/auth/register/', RegisterView.as_view(), name='register'),  # Register endpoint
     path('api/auth/login/', LoginView.as_view(), name='login'),  # Login endpoint
     path('api/auth/token/obtain/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # JWT Token obtain

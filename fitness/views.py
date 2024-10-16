@@ -7,9 +7,16 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import AllowAny
+from django.http import HttpResponse
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def home(request):
+    return HttpResponse("Welcome to the Fitness Tracker API!")
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
