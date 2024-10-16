@@ -9,20 +9,16 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.permissions import AllowAny
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = [AllowAny]  # Allow any user to register
 
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
+    permission_classes = [AllowAny]  # Allow any user to login
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -34,7 +30,6 @@ class LoginView(generics.GenericAPIView):
                 'message': 'Login successful'
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
