@@ -17,7 +17,6 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse("Welcome to the Fitness Tracker API!")
 
-
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
@@ -67,6 +66,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.filter(id=self.request.user.id)
 
 class ActivityViewSet(viewsets.ModelViewSet):
+
     """
     A viewset for CRUD operations on fitness activities.
     Users can only access and modify their own activities.
@@ -78,6 +78,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ['date', 'duration', 'calories_burned']
     ordering = ['-date']  # Default ordering by date (newest first)
+
 
     def get_queryset(self):
         """
@@ -135,7 +136,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         total_duration = Activity.objects.filter(user=user).aggregate(Sum('duration'))['duration__sum'] or 0
         total_distance = Activity.objects.filter(user=user).exclude(distance=None).aggregate(Sum('distance'))['distance__sum'] or 0
         total_calories_burned = Activity.objects.filter(user=user).aggregate(Sum('calories_burned'))['calories_burned__sum'] or 0
-        
+
         # Weekly and monthly activity counts
         weekly_activities = Activity.objects.filter(user=user, date__gte=start_of_week).count()
         monthly_activities = Activity.objects.filter(user=user, date__gte=start_of_month).count()

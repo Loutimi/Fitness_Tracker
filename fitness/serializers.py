@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import Activity, Leaderboard
 from django.contrib.auth import authenticate
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

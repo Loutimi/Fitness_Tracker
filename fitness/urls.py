@@ -11,7 +11,7 @@ router.register(r'activities', ActivityViewSet, basename='activity')
 router.register(r'leaderboard', LeaderboardViewSet, basename='leaderboard')
 
 urlpatterns = [
-    path('', include(router.urls)),  # Include all router URLs
+    path('api/', include(router.urls)),  # Include all router URLs
     path('home/', home, name='home'),
     path('api/auth/register/', RegisterView.as_view(), name='register'),  # Register endpoint
     path('api/auth/login/', LoginView.as_view(), name='login'),  # Login endpoint
